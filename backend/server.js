@@ -5,10 +5,10 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
-import fileRoutes from './routes/files.js';
+import fileRoutes from './routes/file.js';
 import shareRoutes from './routes/share.js';
 
-// ES Modules fix for __dirname
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -16,7 +16,7 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
+
 app.use(cors({
   origin: process.env.FRONTEND_URL,
   credentials: true
@@ -29,12 +29,12 @@ app.use('/api/auth', authRoutes);
 app.use('/api/files', fileRoutes);
 app.use('/api/share', shareRoutes);
 
-// Test route
+
 app.get('/api/test', (req, res) => {
   res.json({ message: 'Backend is working!' });
 });
 
-// Error handling middleware
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Something went wrong!' });
@@ -42,7 +42,7 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB and start server
+
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`✅ Server running on port ${PORT}`);
