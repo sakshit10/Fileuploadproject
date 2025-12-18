@@ -1,4 +1,5 @@
 import express from 'express';
+import crypto from 'crypto';
 import File from '../models/File.js';
 import { authMiddleware } from '../middleware/auth.js';
 
@@ -16,9 +17,8 @@ router.post('/:id/share', authMiddleware, async (req, res) => {
       return res.status(404).json({ error: 'File not found' });
     }
 
-    
-    const shareToken = require('crypto').randomBytes(32).toString('hex');
-    
+  
+    const shareToken = crypto.randomBytes(32).toString('hex');
     
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 24);
@@ -29,7 +29,8 @@ router.post('/:id/share', authMiddleware, async (req, res) => {
     
     await file.save();
 
-    const shareUrl = `${req.protocol}://${req.get('host')}/api/share/download/${shareToken}`;
+    
+    const shareUrl = `/api/share/download/${shareToken}`;
 
     res.json({
       message: 'Share link created',
@@ -55,18 +56,15 @@ router.get('/download/:token', async (req, res) => {
       return res.status(404).json({ error: 'File not found or link expired' });
     }
 
-    
     file.downloadCount = (file.downloadCount || 0) + 1;
     await file.save();
 
-    
     res.download(file.path, file.originalName);
   } catch (error) {
     console.error('Download error:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
-
 
 router.delete('/:id/share', authMiddleware, async (req, res) => {
   try {

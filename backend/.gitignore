@@ -11,7 +11,7 @@ yarn-error.log*
 .env.local
 
 # Uploads folder (for local development)
-backend/uploads/
+uploads/*
 
 # IDE
 .vscode/
